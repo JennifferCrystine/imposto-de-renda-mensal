@@ -62,10 +62,11 @@ public class Interface {
 
     
     public static void main(String[] args) {
-        CalculaIrpf salario = new CalculaIrpf(leiaByte("Informe o número de dependentes: ")
-        ,leiaDouble("Informe seu salário: "));
-        salario.calculaIrpf();
-        salario.exibeSalarioLiquido();
-    }
+        double salarioBruto = leiaDouble("Informe seu salário: ");
+        CalculaIrpf irpf = new CalculaIrpf(leiaInteiro
+            ("Informe a quantidade de dependentes: "));
+        irpf.calculaIrpf(salarioBruto);
+        irpf.exibeImpostoDeRenda(salarioBruto);
+    }   
     
 }

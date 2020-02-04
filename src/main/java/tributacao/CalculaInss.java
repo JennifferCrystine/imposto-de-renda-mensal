@@ -9,64 +9,35 @@ package tributacao;
  * @author jenniffer
  */
 public class CalculaInss {
-    private double salarioTotal;
-    private double salarioDescontado;
-    private double desconto;
+    private double impostoInss;
     
-    public CalculaInss(double salario) {
-        this.salarioTotal = salario; 
-    }
     
-    public double calculaDescontoInss()  {
-        if(salarioTotal <= 1751.81) {
-            desconto = salarioTotal * 0.08;
+    public double calculaDescontoInss(double salarioBruto)  {
+        if(salarioBruto <= 1751.81) {
+            impostoInss = salarioBruto * 0.08;
         }
         
-        //De 2.919,73 até 5.839,45*	11,00%	
-        else if(salarioTotal > 1751.81 && salarioTotal <= 2919.72) {
-            desconto = salarioTotal * 0.09;       
+        else if(salarioBruto > 1751.81 && salarioBruto <= 2919.72) {
+            impostoInss = salarioBruto * 0.09;       
         }
         
-        else if(salarioTotal > 2919.72 && salarioTotal <= 5839.45) {
-            desconto = salarioTotal * 0.11; 
+        else if(salarioBruto > 2919.72 && salarioBruto <= 5839.45) {
+            impostoInss = salarioBruto * 0.11; 
         }
         else 
-            desconto = 642.34;
+            impostoInss = 642.34;
         
-        salarioDescontado -= desconto; 
+        
+        return impostoInss;
     
-        return salarioDescontado;
+    }
+
+
+
     
-    }
-
-
-    public double getSalarioTotal() {
-        return salarioTotal;
-    }
-
-    public double getSalarioDescontado() {
-        return salarioDescontado;
-    }
-
-    public double getDesconto() {
-        return desconto;
-    }
-
-    public void setSalarioTotal(double salarioTotal) {
-        this.salarioTotal = salarioTotal;
-    }
-
-    public void setSalarioDescontado(double salarioDescontado) {
-        this.salarioDescontado = salarioDescontado;
-    }
-
-    public void setDesconto(double desconto) {
-        this.desconto = desconto;
-    }
-    
-    public void mostraTaxas() {
-        System.out.println("Salário bruto: "+salarioTotal);
-        System.out.println("Valor da contribuição INSS: "+desconto);
+    public void mostraTaxas(double salarioBruto) {
+        System.out.println("Salário bruto: "+salarioBruto);
+        System.out.println("Valor da contribuição INSS: "+impostoInss);
     
     }
 

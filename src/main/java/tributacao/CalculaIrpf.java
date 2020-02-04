@@ -10,92 +10,65 @@ package tributacao;
  * @author jenniffer
  */
 public class CalculaIrpf {
-    private CalculaInss impostoInss;
-    private double impostoIrpf; 
-    private double descontoIrpf;
-    private byte numeroDependentes; //número de dependentes do contribuidor
-    private double descontoDependentes; //desconto efetivo de acordo com o número de dependentes
+    private double impostoIrpf;
     private final double DESCONTO_DEPENDENTE = 189.59; //taxa de desconto por dependente
-    
-    public CalculaIrpf(byte dependentes, double salario) {
-        this.impostoInss.setSalarioTotal(salario);       
-        double aux = this.impostoInss.calculaDescontoInss();
-        this.impostoInss.setDesconto(aux);
-        this.impostoInss.calculaDescontoInss();
-        this.numeroDependentes = dependentes;
-    
+    private int numeroDeDependentes;
+  
+    public CalculaIrpf(int numeroDeDependentes) {
+        this.numeroDeDependentes = numeroDeDependentes;
     }
     
-    public double calculaIrpf() {
-        if(impostoInss.getSalarioTotal() < 1903.98) impostoIrpf = 0;
-        
-        else if(impostoInss.getSalarioTotal() >= 1903.99 && impostoInss.getSalarioTotal() <= 2826.65) {
-            impostoIrpf = impostoInss.getSalarioTotal() * 0.075;
-            if(numeroDependentes > 0) { 
-                descontoDependentes = numeroDependentes * DESCONTO_DEPENDENTE;
-                impostoIrpf -= descontoDependentes;
-            }
-            descontoIrpf = impostoInss.getSalarioTotal() - impostoIrpf;            
-        
-        }else if(impostoInss.getSalarioTotal() >= 2826.65 && impostoInss.getSalarioTotal() <= 3751.05) {
-            impostoIrpf = impostoInss.getSalarioTotal() * 0.15;
-            if(numeroDependentes > 0){ 
-                descontoDependentes = numeroDependentes * DESCONTO_DEPENDENTE;
-                impostoIrpf -= descontoDependentes;
-            }
-            descontoIrpf = impostoInss.getSalarioTotal() - impostoIrpf;          
-        
-        }else if(impostoInss.getSalarioTotal() >= 3751.05 && impostoInss.getSalarioTotal() <= 4664.68) {
-            impostoIrpf = impostoInss.getSalarioTotal() * 0.225;
-            if(numeroDependentes > 0){ 
-                descontoDependentes = numeroDependentes * DESCONTO_DEPENDENTE;
-                impostoIrpf -= descontoDependentes;
-            }
-            descontoIrpf = impostoInss.getSalarioTotal() - impostoIrpf; 
-            
-        }else {
-            impostoIrpf = impostoInss.getSalarioTotal() * 0.275;
-            if(numeroDependentes > 0){ 
-                descontoDependentes = numeroDependentes * DESCONTO_DEPENDENTE;
-                impostoIrpf -= descontoDependentes;
-            }
-            descontoIrpf = impostoInss.getSalarioTotal() - impostoIrpf;             
-
-        }
-        
-        impostoInss.setSalarioTotal(descontoIrpf);
-        return impostoInss.getSalarioDescontado();
+    
+    public double calculaDescontoPorDependente() {
+        return numeroDeDependentes * DESCONTO_DEPENDENTE;
     }
+    
 
-    public CalculaInss getSalario() {
+    public double calculaInss(double salarioBruto) {
+        CalculaInss salario = new CalculaInss();
+        double impostoInss = salario.calculaDescontoInss(salarioBruto);
         return impostoInss;
     }
-
-    public double getImpostoIrpf() {
-        return impostoIrpf;
-    }
-
-    public byte getNumeroDependentes() {
-        return numeroDependentes;
-    }
-
-    public double getDescontoDependentes() {
-        return descontoDependentes;
-    }
-
-    public double getDESCONTO_DEPENDENTE() {
-        return DESCONTO_DEPENDENTE;
-    }
-  
-    public double descontoTotal() {
-        return impostoIrpf + impostoInss.getDesconto();
-    }
     
-    public void exibeSalarioLiquido() {
-        impostoInss.mostraTaxas();
-        System.out.println("salario bruto: "+impostoInss.getSalarioTotal());
-        System.out.println("IRPF: "+impostoIrpf);
-        System.out.println("Desconto total: "+descontoTotal());
-        System.out.println("Salário final: "+impostoInss.getSalarioDescontado());
+    public double calculaIrpf(double salarioBruto) {
+        double salarioLiquido, impostoInss;
+        impostoInss = calculaInss(salarioBruto);
+        salarioLiquido = salarioBruto - impostoInss;
+       
+        
+        if(salarioBruto < 1903.98) impostoIrpf = 0;
+        
+        else if(salarioBruto >= 1903.99 && salarioBruto <= 2826.65) {
+            impostoIrpf = salarioBruto * 0.075;
+            if(numeroDeDependentes > 0) impostoIrpf -= calculaDescontoPorDependente();
+            salarioLiquido = salarioBruto - impostoIrpf;            
+        
+        }else if(salarioBruto >= 2826.65 && salarioBruto <= 3751.05) {
+            impostoIrpf = salarioBruto * 0.15;
+            if(numeroDeDependentes > 0) impostoIrpf -= calculaDescontoPorDependente();
+             salarioLiquido = salarioBruto - impostoIrpf;
+            
+        }else if(salarioBruto >= 3751.05 && salarioBruto <= 4664.68) {
+            impostoIrpf = salarioBruto * 0.225;
+            if(numeroDeDependentes > 0) impostoIrpf -= calculaDescontoPorDependente();
+             salarioLiquido = salarioBruto - impostoIrpf;
+             
+        } else {
+            impostoIrpf = salarioBruto * 0.275;
+            if(numeroDeDependentes > 0) impostoIrpf -= calculaDescontoPorDependente();
+             salarioLiquido = salarioBruto - impostoIrpf;
+        }
+         
+        return salarioLiquido;        
+    }  
+    
+    public void exibeImpostoDeRenda(double salarioBruto) {
+        double salarioLiquido = calculaIrpf(salarioBruto);
+        double descontoTotal = impostoIrpf + calculaInss(salarioBruto);
+        System.out.println("Imposto IRPF: "+impostoIrpf);
+        System.out.println("Desconto total: "+descontoTotal);
+        System.out.println("Salário  bruto: "+salarioBruto);
+        System.out.println("Valor da contribuição INSS: "+calculaInss(salarioBruto));
+        System.out.println("Salário líquido: "+salarioLiquido);
     }
 }
